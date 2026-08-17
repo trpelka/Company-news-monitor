@@ -1,0 +1,30 @@
+# ============================================================
+# COMPANY NEWS MONITOR - Colab, free, no API keys
+# Watches free RSS feeds for mentions of companies on your watchlist.
+# ============================================================
+
+# --- Cell 1: install ---
+!pip install -q feedparser
+
+# --- Cell 2: your watchlist + feeds ---
+watchlist = ["Acme Industrial", "MedTech Polska", "GrantWorks"]
+
+# Free RSS feeds - swap in trade press / regulatory feeds relevant to you.
+# Google News RSS search is a good free general-purpose starting point.
+feeds = [
+    "https://news.google.com/rss/search?q=przemysl+polska&hl=pl&gl=PL&ceid=PL:pl",
+    "https://news.google.com/rss/search?q=medtech+poland&hl=en",
+]
+
+# --- Cell 3: check feeds for watchlist mentions ---
+import feedparser
+
+for feed_url in feeds:
+    feed = feedparser.parse(feed_url)
+    print(f"\nChecking feed: {feed_url}")
+    for entry in feed.entries[:20]:
+        title = entry.get("title", "")
+        for company in watchlist:
+            if company.lower() in title.lower():
+                print(f"  MATCH [{company}]: {title}")
+                print(f"    {entry.get('link', '')}")
